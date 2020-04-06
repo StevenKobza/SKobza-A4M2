@@ -24,16 +24,19 @@ public class Calculator extends Application{
 	private String enteredNums;
 	private Color fontCol;
 	private boolean tempBool;
+	private ArrayList<String> calculation; 
+	private boolean add, sub, div, mult;
 	
 	public Calculator() {
 		numbers = new ArrayList<NumberHolder>();
 		setUpAL();
 		enteredNums = "";
 		tempBool = false;
+		calculation = new ArrayList<String>();
 	}
 	
 	private void setUpAL() {
-		String[] temp = {"C", "\u207A\u2215\u208B", "%", "\u2052", "7", "8", "9", "X", "4",
+		String[] temp = {"C", "\u207A\u2215\u208B", "%", "/", "7", "8", "9", "X", "4",
 				"5", "6", "-", "1", "2", "3", "+", "0", ".", "="};
 		for (int i = 0; i < temp.length; i++) {
 			if (temp[i] == "0") {
@@ -63,20 +66,37 @@ public class Calculator extends Application{
 		for (int i = 0; i < numbers.size(); i++) {
 			newLine = false;
 			if (i < 3) {
-				g2.setColor(Color.gray);
+				if (numbers.get(i).getActive()) {
+					g2.setColor(Color.lightGray);
+				} else {
+					g2.setColor(Color.gray);
+				}
 				fontCol = Color.black;
 			} else if (i == 3 || i == 7 || i == 11 || i == 15 || i == 18) {
-				g2.setColor(Color.orange);
-				fontCol = Color.white;
+				if (numbers.get(i).getActive()) {
+					g2.setColor(Color.white);
+					fontCol = Color.orange;
+				} else {
+					g2.setColor(Color.orange);
+					fontCol = Color.white;
+				}
 				newLine = true;
 			} else if (i == 17) {
+				if (numbers.get(i).getActive()) {
+					g2.setColor(Color.lightGray);
+				} else {
 				g2.setColor(Color.DARK_GRAY);
+				}
 				fontCol = Color.white;
 				tempX += (CIRCLE_BUTTON_DIA*1.25);
 				g2.translate((CIRCLE_BUTTON_DIA*1.25), 0);
 			}
 			else {
-				g2.setColor(Color.darkGray);
+				if (numbers.get(i).getActive()) {
+					g2.setColor(Color.lightGray);
+				} else {
+				g2.setColor(Color.DARK_GRAY);
+				}
 				fontCol = Color.white;
 			}
 			numbers.get(i).setXY(tempX, tempY);
@@ -99,9 +119,27 @@ public class Calculator extends Application{
 				g2.translate(-((CIRCLE_BUTTON_DIA * 1.25)*4), CIRCLE_BUTTON_DIA*1.25);
 			}
 		}
+		resetNums();
 		g2.setTransform(tx);
 	}
 
+	public void resetNums() {
+		for (NumberHolder i : numbers) {
+			try {
+				int tempI = Integer.parseInt(i.getChar());
+				i.setActive(false);
+			} catch (Exception e) {
+				if (i.getChar() == "???") {
+					i.setActive(false);
+				} else if (i.getChar() == "C") {
+					i.setActive(false);
+				} else if (i.getChar() == "%") {
+					i.setActive(false);
+				}
+			}
+			
+		}
+	}
 	
 	public boolean clicked(MouseEvent e) {
 		boolean temp = false;
@@ -111,6 +149,7 @@ public class Calculator extends Application{
 				temp = true;
 				location = i;
 				System.out.println("found");
+				numbers.get(i).setActive(true);
 				break;
 			}
 		}
@@ -121,8 +160,79 @@ public class Calculator extends Application{
 				int tempI = Integer.parseInt(numbers.get(location).getChar());
 				enteredNums = enteredNums.concat(numbers.get(location).getChar());
 			} catch(Exception eI) {
-				System.out.println(eI.getMessage());
+				System.out.println(numbers.get(location).getChar());
 				if (numbers.get(location).getChar() == "C") {
+					for (NumberHolder i : numbers) {
+						i.setActive(false);
+					}
+					enteredNums = "";
+					add = false;
+					sub = false;
+					mult = false;
+					div = false;
+					calculation.clear();
+				} else if (numbers.get(location).getChar() == "X") {
+					for (NumberHolder i : numbers) {
+						i.setActive(false);
+					}
+					add = false;
+					sub = false;
+					div = false;
+					mult = true;
+					numbers.get(location).setActive(true);
+					calculation.add(enteredNums);
+					enteredNums = "";
+				} else if (numbers.get(location).getChar() == "=") {
+					for (NumberHolder i : numbers) {
+						i.setActive(false);
+					}
+					numbers.get(location).setActive(true);
+					if (!calculation.isEmpty()) {
+						double tempD = Integer.parseInt(calculation.get(0));
+						double tempEntered = Integer.parseInt(enteredNums);
+						if (add) {
+							enteredNums = Double.toString(tempD + tempEntered);
+						} else if (sub) {
+							enteredNums = Double.toString(tempD - tempEntered);
+						} else if (mult) {
+							enteredNums = Double.toString(tempD * tempEntered);
+						} else if (div) {
+							enteredNums = Double.toString(tempD / tempEntered);
+						}
+					}
+					calculation.clear();
+				} else if (numbers.get(location).getChar() == "/") {
+					for (NumberHolder i : numbers) {
+						i.setActive(false);
+					}
+					add = false;
+					sub = false;
+					mult = false;
+					div = true;
+					numbers.get(location).setActive(true);
+					calculation.add(enteredNums);
+					enteredNums = "";
+				} else if (numbers.get(location).getChar() == "-") {
+					for (NumberHolder i : numbers) {
+						i.setActive(false);
+					}
+					add = false;
+					mult = false;
+					div = false;
+					sub = true;
+					numbers.get(location).setActive(true);
+					calculation.add(enteredNums);
+					enteredNums = "";
+				} else if (numbers.get(location).getChar() == "+") {
+					for (NumberHolder i : numbers) {
+						i.setActive(false);
+					}
+					numbers.get(location).setActive(true);
+					sub = false;
+					mult = false;
+					div = false;
+					add = true;
+					calculation.add(enteredNums);
 					enteredNums = "";
 				}
 			}

@@ -3,19 +3,23 @@ package mainClasses;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
 import javax.swing.JPanel;
+import javax.swing.Timer;
+
 import apps.*;
 
 @SuppressWarnings("serial")
-public class PhonePanel extends JPanel {
+public class PhonePanel extends JPanel implements ActionListener{
 	private static final int PHONE_W = 500;
 	private static final int PHONE_H = 1000;
 	private double lastIntYPos;
-	
+	private Timer t;
 	private int appSelected = 0; //0 = Home Screen, 1 = Calc, 2 = Canv, 3 = Photos, 4 = Settings
 	HomeScreen homeScreen;
 	
@@ -25,6 +29,8 @@ public class PhonePanel extends JPanel {
 		homeScreen = new HomeScreen(new Dimension(PHONE_W, PHONE_H));
 		appSelected = 4;
 		homeScreen.appToDisplay(0);
+		t = new Timer(1000/fr, this);
+		t.restart();
 		
 		lastIntYPos = 0;
 		this.addMouseListener(new MouseAdapter() {
@@ -59,5 +65,11 @@ public class PhonePanel extends JPanel {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
 		homeScreen.draw(g2);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		
 	}
 }

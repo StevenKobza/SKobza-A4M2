@@ -12,6 +12,7 @@ public class NumberHolder {
 	private Ellipse2D.Float round;
 	private RoundRectangle2D.Float zeroRound;
 	private String character;
+	private Boolean isActive;
 	
 	public NumberHolder(String c, double x, double y, float w, float h, boolean z) {
 		this.x = x;
@@ -21,6 +22,7 @@ public class NumberHolder {
 		zeroRound = new RoundRectangle2D.Float(-w/5, -h/2, w, h, 100, 200);
 		}
 		character = c;
+		isActive = false;
 	}
 	
 	public boolean clicked(MouseEvent e) {
@@ -53,5 +55,13 @@ public class NumberHolder {
 	
 	public RoundRectangle2D.Float getZero() {
 		return zeroRound;
+	}
+	
+	public void setActive(Boolean t) {
+		isActive = t;
+	}
+	
+	public Boolean getActive() {
+		return isActive;
 	}
 }

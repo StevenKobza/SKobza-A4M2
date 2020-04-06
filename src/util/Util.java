@@ -7,7 +7,13 @@ import java.util.ArrayList;
 
 public class Util {
 
+	public static float random(int low, int high) {
+		return (float)(Math.random()*high + low);
+	}
+	
 	public static void setUpMenus(ArrayList<SettingMenu> settings) {
+		
+		
 		SettingMenu airplaneMode = new SettingMenu("Airplane Mode",1);
 		SettingMenu wifi = new SettingMenu("Wi-Fi",1);
 		SettingMenu bluetooth = new SettingMenu("Bluetooth",1);
@@ -117,7 +123,7 @@ public class Util {
 		settings.add(podcasts);
 		settings.add(gc);
 	}
-
+	
 	public static void setUpClasses(ArrayList<Classes> classes) {
 		Classes iat106 = new Classes("IAT 106 Line Drawing Simulator", "IAT 106", Color.blue, (500-100)/2, 100);
 		Classes iat201 = new Classes("IAT 201 Working with groups ain't great", "IAT 201", Color.red, (500-100)/2, 100);

@@ -28,6 +28,7 @@ public class HomeScreen extends Application{
 		settings = new Settings();
 		canv = new Canvas();
 		icons = new ArrayList<Icon>();
+		photos = new Photos();
 		setIcons();
 	}
 	
@@ -44,8 +45,6 @@ public class HomeScreen extends Application{
 		g2.setColor(Color.black);
 		g2.drawString("When you go into an App, drag from bottom to go back", 100, 500);
 		g2.setTransform(at);
-		//calc.draw(g2);
-		
 		switch(appSelected) {
 		case 0:
 			drawSub(g2);
@@ -57,7 +56,7 @@ public class HomeScreen extends Application{
 			canv.draw(g2);
 			break;
 		case 3:
-			//photos.draw(g2);
+			photos.draw(g2);
 			break;
 		case 4:
 			settings.draw(g2);
