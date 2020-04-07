@@ -53,4 +53,8 @@ public class SettingMenu {
 		}
 		return temp;
 	}
+	
+	public ArrayList<SettingMenu> getSubMenu() {
+		return subSettings;
+	}
 }

@@ -1,5 +1,7 @@
 package mainClasses;
 
+import java.awt.Window;
+
 import javax.swing.JFrame;
 
 @SuppressWarnings("serial")
@@ -14,6 +16,7 @@ public class PhoneMain extends JFrame{
 		this.add(phoneP);
 		this.setFocusable(true);
 		this.setVisible(true);
+		phoneP.requestFocus();
 	}
 
 	public static void main(String[] args) {

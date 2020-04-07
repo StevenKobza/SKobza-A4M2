@@ -3,6 +3,7 @@ package apps;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -20,7 +21,7 @@ public class HomeScreen extends Application{
 	private Settings settings;
 	private ArrayList<Icon> icons;
 	private int appSelected = 0; //0 = Home Screen, 1 = Calc, 2 = Canv, 3 = Photos, 4 = Settings
-	
+	private ImageHolder wallpaper, original;
 	
 	public HomeScreen(Dimension frameDim) {
 		super(frameDim);
@@ -29,6 +30,8 @@ public class HomeScreen extends Application{
 		canv = new Canvas();
 		icons = new ArrayList<Icon>();
 		photos = new Photos();
+		wallpaper = new ImageHolder((long)2580894, "wallpaper.png");
+		original = wallpaper;
 		setIcons();
 	}
 	
@@ -44,6 +47,7 @@ public class HomeScreen extends Application{
 		AffineTransform at = g2.getTransform();
 		g2.setColor(Color.black);
 		g2.drawString("When you go into an App, drag from bottom to go back", 100, 500);
+		g2.drawString("For the photos app, use the right and left arrow keys to navigate", 80, 550);
 		g2.setTransform(at);
 		switch(appSelected) {
 		case 0:
@@ -68,6 +72,7 @@ public class HomeScreen extends Application{
 		AffineTransform af = g2.getTransform();
 		int tempY = frameDim.height/14;
 		int tempX = frameDim.width/8;
+		g2.drawImage(wallpaper.getImage(), 0, 0, null);
 		g2.translate(frameDim.width/8, frameDim.height/14);
 		g2.setColor(Color.black);
 		for (int i = 0; i < icons.size(); i++) {
@@ -84,6 +89,24 @@ public class HomeScreen extends Application{
 	
 	public void appToDisplay(int app) {
 		appSelected = app;
+	}
+	
+	private void setWallpaper() {
+		int numImage = settings.hasWPChanged();
+		ArrayList<ImageHolder> temp = photos.getImages();
+		switch(numImage) {
+		case 1:
+			wallpaper = temp.get(0);
+			break;
+		case 2:
+			wallpaper = temp.get(1);
+			break;
+		case 3:
+			wallpaper = temp.get(2);
+			break;
+		case 4:
+			wallpaper = original;
+		}
 	}
 	
 	public void scrollApp(double x, double y, double origin) {
@@ -121,8 +144,13 @@ public class HomeScreen extends Application{
 			break;
 		case 4:
 			settings.clicked(e);
+			setWallpaper();
 			break;
 		}
+	}
+	
+	public void updatePhoto(KeyEvent e) {
+		photos.update(e);
 	}
 	
 	@Override

@@ -72,4 +72,8 @@ public class ImageHolder {
 			xOff += 0.01;
 		}
 	}
+	
+	public String getFN() {
+		return fileName;
+	}
 }

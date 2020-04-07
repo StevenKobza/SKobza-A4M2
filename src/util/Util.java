@@ -15,9 +15,32 @@ public class Util {
 		
 		
 		SettingMenu airplaneMode = new SettingMenu("Airplane Mode",1);
+		
 		SettingMenu wifi = new SettingMenu("Wi-Fi",1);
+		SettingMenu wifi2 = new SettingMenu("Wi-Fi", 1);
+		SettingMenu askToJoin = new SettingMenu("Ask To Join Networks", 2);
+		SettingMenu autoJoin = new SettingMenu("Auto-Join Hotspot", 3);
+		wifi.addSubSetting(wifi2);
+		wifi.addSubSetting(askToJoin);
+		wifi.addSubSetting(autoJoin);
+		
 		SettingMenu bluetooth = new SettingMenu("Bluetooth",1);
+		SettingMenu bt = new SettingMenu("Bluetooth", 1);
+		bluetooth.addSubSetting(bt);
+		
 		SettingMenu cellular = new SettingMenu("Cellular",1);
+		cellular.addSubSetting(new SettingMenu("Cellular Data", 1));
+		cellular.addSubSetting(new SettingMenu("Cellular Data Options", 1));
+		cellular.addSubSetting(new SettingMenu("Personal Hotspot", 1));
+		cellular.addSubSetting(new SettingMenu("Wi-Fi Calling", 2));
+		cellular.addSubSetting(new SettingMenu("Call on Other Devices", 2));
+		cellular.addSubSetting(new SettingMenu("Carrier Services", 2));
+		cellular.addSubSetting(new SettingMenu("Network Selection", 2));
+		cellular.addSubSetting(new SettingMenu("SIM PIN", 2));
+		cellular.addSubSetting(new SettingMenu("SIM Applications", 2));
+		cellular.addSubSetting(new SettingMenu("Wi-Fi Assist", 3));
+		cellular.addSubSetting(new SettingMenu("iCloud Drive", 4));
+		
 		SettingMenu personalHotspot = new SettingMenu("Personal Hotspot",1);
 		SettingMenu vpn = new SettingMenu("VPN",1);
 		
@@ -45,6 +68,16 @@ public class Util {
 		SettingMenu disp = new SettingMenu("Display & Brightness",3);
 		SettingMenu access = new SettingMenu("Accessibility",3);
 		SettingMenu wall = new SettingMenu("Wallpaper",3);
+		SettingMenu wall1 = new SettingMenu("Photo 1", 1);
+		SettingMenu wall2 = new SettingMenu("Photo 2", 2);
+		SettingMenu wall3 = new SettingMenu("Photo 3", 3);
+		SettingMenu wall4 = new SettingMenu("Keep Current", 4);
+		
+		wall.addSubSetting(wall1);
+		wall.addSubSetting(wall2);
+		wall.addSubSetting(wall3);
+		wall.addSubSetting(wall4);
+		
 		SettingMenu siriS = new SettingMenu("Siri & Search",3);
 		SettingMenu faceID = new SettingMenu("Face ID & Passcode",3);
 		SettingMenu emerg = new SettingMenu("Emergency SOS",3);

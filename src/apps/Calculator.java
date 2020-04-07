@@ -12,6 +12,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import storageClasses.*;
 import abstractClasses.*;
@@ -188,7 +189,16 @@ public class Calculator extends Application{
 					}
 					numbers.get(location).setActive(true);
 					if (!calculation.isEmpty()) {
-						double tempD = Integer.parseInt(calculation.get(0));
+						double tempD = 0;
+						try {
+							tempD = Integer.parseInt(calculation.get(0));
+						} catch (NumberFormatException n) {
+							if (!calculation.get(0).isEmpty()) {
+								tempD = Double.parseDouble(calculation.get(0));
+							} else {
+								tempD = 0;
+							}
+						}
 						double tempEntered = Integer.parseInt(enteredNums);
 						if (add) {
 							enteredNums = Double.toString(tempD + tempEntered);
@@ -197,7 +207,14 @@ public class Calculator extends Application{
 						} else if (mult) {
 							enteredNums = Double.toString(tempD * tempEntered);
 						} else if (div) {
+							try {
+								if (tempEntered == 0) {
+									throw new IllegalArgumentException("Divisor Cannot Be Zero");
+								}
 							enteredNums = Double.toString(tempD / tempEntered);
+							} catch (Exception nE) {
+								JOptionPane.showMessageDialog(null, "Cannot Divide By 0", "Ur Rekt M8", JOptionPane.ERROR_MESSAGE);
+							}
 						}
 					}
 					calculation.clear();
