@@ -9,6 +9,7 @@ import java.awt.image.*;
 import java.io.File;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
 public class ImageHolder {
 	private BufferedImage bI;
@@ -33,6 +34,7 @@ public class ImageHolder {
 			bufImg = ImageIO.read(new File("assets/" + fileName));
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
+			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
 		return bufImg;
 	}
@@ -47,7 +49,11 @@ public class ImageHolder {
 	}
 	
 	public BufferedImage getImage() {
-		return bufImag;
+		if (bufImag != null) {
+			return bufImag;
+		} else {
+			return bI;
+		}
 	}
 	
 	public void getColors() {
