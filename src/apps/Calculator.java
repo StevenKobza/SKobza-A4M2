@@ -1,9 +1,19 @@
+/**
+ * @author Steven Kobza
+ * @version 1.0
+ * <h1> Calculator Application </h1>
+ * <p> This class was by far and away the biggest pain for me. It has some janky code but it all works.
+ * What it does is create a functioning calculator.</p>
+ */
+
 package apps;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
@@ -13,11 +23,12 @@ import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 
 import storageClasses.*;
 import abstractClasses.*;
 
-public class Calculator extends Application{
+public class Calculator extends Application implements ActionListener{
 	private ArrayList<NumberHolder> numbers;
 	private RoundRectangle2D.Float zero;
 	private static final int CIRCLE_BUTTON_DIA = 100;
@@ -25,43 +36,48 @@ public class Calculator extends Application{
 	private String enteredNums;
 	private Color fontCol;
 	private boolean tempBool;
-	private ArrayList<String> calculation; 
+	private ArrayList<String> calculation;
 	private boolean add, sub, div, mult;
-	
+	private Timer calcT;
+
 	public Calculator() {
 		numbers = new ArrayList<NumberHolder>();
 		setUpAL();
 		enteredNums = "";
 		tempBool = false;
 		calculation = new ArrayList<String>();
+		calcT = new Timer(50, this);
 	}
-	
+
 	private void setUpAL() {
-		String[] temp = {"C", "\u207A\u2215\u208B", "%", "/", "7", "8", "9", "X", "4",
-				"5", "6", "-", "1", "2", "3", "+", "0", ".", "="};
+		// The weird thing at index 1 is the +/- sign
+		String[] temp = { "C", "\u207A\u2215\u208B", "%", "/", "7", "8", "9", "X", "4", "5", "6", "-", "1", "2", "3",
+				"+", "0", ".", "=" };
 		for (int i = 0; i < temp.length; i++) {
 			if (temp[i] == "0") {
 				numbers.add(new NumberHolder(temp[i], 0, 0, ZERO_BUTTON_WIDTH, ZERO_BUTTON_HEIGHT, true));
 			} else {
-			NumberHolder tempnH = new NumberHolder(temp[i], 0, 0, CIRCLE_BUTTON_DIA, CIRCLE_BUTTON_DIA, false);
-			numbers.add(tempnH);
+				NumberHolder tempnH = new NumberHolder(temp[i], 0, 0, CIRCLE_BUTTON_DIA, CIRCLE_BUTTON_DIA, false);
+				numbers.add(tempnH);
 			}
 		}
-		
+
 	}
-	
+
 	public void draw(Graphics2D g2) {
 		AffineTransform tx = g2.getTransform();
+
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setColor(Color.black);
-		g2.fillRect(0,  0, frameDim.width, frameDim.height);
-		double tempX = CIRCLE_BUTTON_DIA/1.6;
-		double tempY = frameDim.height/3;
+
+		g2.fillRect(0, 0, frameDim.width, frameDim.height);
+		double tempX = CIRCLE_BUTTON_DIA / 1.6;
+		double tempY = frameDim.height / 3;
 		g2.setColor(Color.white);
-		g2.translate(CIRCLE_BUTTON_DIA/1.6, frameDim.height/3);
+		g2.translate(CIRCLE_BUTTON_DIA / 1.6, frameDim.height / 3);
 		Font savedFont = g2.getFont();
 		g2.setFont(new Font("Calibri", Font.BOLD, 96));
-		g2.drawString(enteredNums, -CIRCLE_BUTTON_DIA/2, -96);
+		g2.drawString(enteredNums, -CIRCLE_BUTTON_DIA / 2, -96);
 		g2.setFont(savedFont.deriveFont(35f));
 		boolean newLine = false;
 		for (int i = 0; i < numbers.size(); i++) {
@@ -86,17 +102,16 @@ public class Calculator extends Application{
 				if (numbers.get(i).getActive()) {
 					g2.setColor(Color.lightGray);
 				} else {
-				g2.setColor(Color.DARK_GRAY);
+					g2.setColor(Color.DARK_GRAY);
 				}
 				fontCol = Color.white;
-				tempX += (CIRCLE_BUTTON_DIA*1.25);
-				g2.translate((CIRCLE_BUTTON_DIA*1.25), 0);
-			}
-			else {
+				tempX += (CIRCLE_BUTTON_DIA * 1.25);
+				g2.translate((CIRCLE_BUTTON_DIA * 1.25), 0);
+			} else {
 				if (numbers.get(i).getActive()) {
 					g2.setColor(Color.lightGray);
 				} else {
-				g2.setColor(Color.DARK_GRAY);
+					g2.setColor(Color.DARK_GRAY);
 				}
 				fontCol = Color.white;
 			}
@@ -104,23 +119,22 @@ public class Calculator extends Application{
 			if (numbers.get(i).getChar() == "0") {
 				g2.fill(numbers.get(i).getZero());
 			} else {
-			g2.fill(numbers.get(i).getRound());
+				g2.fill(numbers.get(i).getRound());
 			}
 			g2.setColor(fontCol);
 			if (i != 1) {
 				g2.drawString(numbers.get(i).getChar(), -11, 10);
 			} else {
-			g2.drawString(numbers.get(i).getChar(), -20, 7);
+				g2.drawString(numbers.get(i).getChar(), -20, 7);
 			}
-			tempX += CIRCLE_BUTTON_DIA*1.25;
+			tempX += CIRCLE_BUTTON_DIA * 1.25;
 			g2.translate(CIRCLE_BUTTON_DIA * 1.25, 0);
 			if (newLine) {
-				tempX -= (CIRCLE_BUTTON_DIA*1.25)*4;
-				tempY += CIRCLE_BUTTON_DIA*1.25;
-				g2.translate(-((CIRCLE_BUTTON_DIA * 1.25)*4), CIRCLE_BUTTON_DIA*1.25);
+				tempX -= (CIRCLE_BUTTON_DIA * 1.25) * 4;
+				tempY += CIRCLE_BUTTON_DIA * 1.25;
+				g2.translate(-((CIRCLE_BUTTON_DIA * 1.25) * 4), CIRCLE_BUTTON_DIA * 1.25);
 			}
 		}
-		resetNums();
 		g2.setTransform(tx);
 	}
 
@@ -130,6 +144,9 @@ public class Calculator extends Application{
 				int tempI = Integer.parseInt(i.getChar());
 				i.setActive(false);
 			} catch (Exception e) {
+				if (i.getChar() == ".") {
+					i.setActive(false);
+				}
 				if (i.getChar() == "???") {
 					i.setActive(false);
 				} else if (i.getChar() == "C") {
@@ -138,10 +155,10 @@ public class Calculator extends Application{
 					i.setActive(false);
 				}
 			}
-			
+
 		}
 	}
-	
+
 	public boolean clicked(MouseEvent e) {
 		boolean temp = false;
 		int location = 0;
@@ -149,18 +166,18 @@ public class Calculator extends Application{
 			if (numbers.get(i).clicked(e)) {
 				temp = true;
 				location = i;
-				System.out.println("found");
 				numbers.get(i).setActive(true);
+				calcT.restart();
 				break;
 			}
 		}
 		System.out.println(temp);
 		if (temp) {
 			try {
-				
+
 				int tempI = Integer.parseInt(numbers.get(location).getChar());
 				enteredNums = enteredNums.concat(numbers.get(location).getChar());
-			} catch(Exception eI) {
+			} catch (Exception eI) {
 				System.out.println(numbers.get(location).getChar());
 				if (numbers.get(location).getChar() == "C") {
 					for (NumberHolder i : numbers) {
@@ -211,9 +228,10 @@ public class Calculator extends Application{
 								if (tempEntered == 0) {
 									throw new IllegalArgumentException("Divisor Cannot Be Zero");
 								}
-							enteredNums = Double.toString(tempD / tempEntered);
+								enteredNums = Double.toString(tempD / tempEntered);
 							} catch (Exception nE) {
-								JOptionPane.showMessageDialog(null, "Cannot Divide By 0", "Ur Rekt M8", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(null, "Cannot Divide By 0", "Ur Rekt M8",
+										JOptionPane.ERROR_MESSAGE);
 							}
 						}
 					}
@@ -253,8 +271,15 @@ public class Calculator extends Application{
 					enteredNums = "";
 				}
 			}
-			
+
 		}
 		return temp;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+
+		resetNums();
+		
 	}
 }

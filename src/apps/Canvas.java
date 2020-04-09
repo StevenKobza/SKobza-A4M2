@@ -1,3 +1,11 @@
+/**
+ * @author Steven Kobza
+ * @version 1.0
+ * <h1> Canvas Application </h1>
+ * <p> This is a version of the canvas app but a lot shittier because I don't have access to the niceties
+ * of android studio or xcode to make my buttons look better.</p>
+ */
+
 package apps;
 
 import java.awt.Color;
@@ -11,7 +19,6 @@ import java.util.ArrayList;
 import storageClasses.*;
 import abstractClasses.*;
 import util.Util;
-import subClasses.Module;
 
 public class Canvas extends Application{
 	ArrayList<Classes> classes;
@@ -50,13 +57,7 @@ public class Canvas extends Application{
 		g2.translate(frameDim.width/4, 200);
 		for (int i = 0; i < classes.size(); i++) {
 			classes.get(i).setXY(tempX, tempY);
-			g2.setColor(classes.get(i).getClassColor());
-			g2.fill(classes.get(i).getBG());
-			g2.setColor(Color.white);
-			g2.fill(classes.get(i).getFG());
-			g2.setColor(Color.black);
-			g2.setFont(new Font("Montserrat", Font.PLAIN, 23));
-			g2.drawString(classes.get(i).getShortName(), (int)(-frameDim.width/5.5), 20);
+			classes.get(i).draw(g2);
 			if (i % 2 != 0) {
 				g2.translate(-frameDim.width/2, frameDim.height/4);
 				tempX -= frameDim.width/2;

@@ -1,37 +1,60 @@
+/**
+ * @author Steven Kobza
+ * @version 1.0
+ * <h1>Home Screen</h1>
+ * <p>This is the home screen for the iPhone. It holds all the code to transition
+ * between apps and also communicates between the JPanel and the actual apps
+ * themselves.</p>
+ */
+
 package apps;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.swing.Timer;
 
 import processing.core.PVector;
 import storageClasses.*;
 import abstractClasses.*;
 
-public class HomeScreen extends Application{
+public class HomeScreen extends Application implements ActionListener{
 	private Calculator calc;
 	private Canvas canv;
 	private Photos photos;
 	private Settings settings;
 	private ArrayList<Icon> icons;
 	private int appSelected = 0; //0 = Home Screen, 1 = Calc, 2 = Canv, 3 = Photos, 4 = Settings
-	private ImageHolder wallpaper, original;
+	private ImageHolder wallpaper;
+	private Timer t;
 	
 	public HomeScreen(Dimension frameDim) {
 		super(frameDim);
+		ArrayList<Application> apps;
 		calc = new Calculator();
 		settings = new Settings();
 		canv = new Canvas();
 		icons = new ArrayList<Icon>();
 		photos = new Photos();
-		wallpaper = new ImageHolder((long)2580894, "wallpaper.png");
-		original = wallpaper;
+		apps = new ArrayList<Application>();
+		apps.add(calc);
+		apps.add(settings);
+		apps.add(canv);
+		apps.add(photos);
+		wallpaper = new ImageHolder((long)2580894, "wallpaper", 4);
+		images.add(wallpaper);
+		wallpaperName = "wallpaper";
+		t = new Timer(50, this);
 		setIcons();
 	}
 	
@@ -44,11 +67,6 @@ public class HomeScreen extends Application{
 	}
 	
 	public void draw(Graphics2D g2) {
-		AffineTransform at = g2.getTransform();
-		g2.setColor(Color.black);
-		g2.drawString("When you go into an App, drag from bottom to go back", 100, 500);
-		g2.drawString("For the photos app, use the right and left arrow keys to navigate", 80, 550);
-		g2.setTransform(at);
 		switch(appSelected) {
 		case 0:
 			drawSub(g2);
@@ -66,6 +84,17 @@ public class HomeScreen extends Application{
 			settings.draw(g2);
 			break;
 		}
+		drawBottomBar(g2);
+	}
+	
+	public void drawBottomBar(Graphics2D g2) {
+		AffineTransform af = g2.getTransform();
+		g2.setColor(new Color(20, 20, 20, 50));
+		g2.translate(0, frameDim.height-100);
+		g2.fillRect(0, 0, frameDim.width, 100);
+		g2.setColor(Color.white);
+		g2.fillRect(frameDim.width/2-50, 20, 100, 10);
+		g2.setTransform(af);
 	}
 	
 	public void drawSub(Graphics2D g2) {
@@ -76,11 +105,8 @@ public class HomeScreen extends Application{
 		g2.translate(frameDim.width/8, frameDim.height/14);
 		g2.setColor(Color.black);
 		for (int i = 0; i < icons.size(); i++) {
-			g2.setColor(Color.black);
 			icons.get(i).setXY(tempX, tempY);
-			g2.fill(icons.get(i).getIcon());
-			g2.setColor(Color.white);
-			g2.drawString(icons.get(i).getName(), -20, 0);
+			icons.get(i).draw(g2);
 			g2.translate(frameDim.width/4, 0);
 			tempX += frameDim.width/4;
 		}
@@ -92,36 +118,21 @@ public class HomeScreen extends Application{
 	}
 	
 	private void setWallpaper() {
-		int numImage = settings.hasWPChanged();
-		ArrayList<ImageHolder> temp = photos.getImages();
-		switch(numImage) {
-		case 1:
-			wallpaper = temp.get(0);
-			break;
-		case 2:
-			wallpaper = temp.get(1);
-			break;
-		case 3:
-			wallpaper = temp.get(2);
-			break;
-		case 4:
-			wallpaper = original;
+		try {
+			Iterator<ImageHolder> iI = new imageIterator(wallpaperName);
+			wallpaper = iI.next();
+		} catch (Exception e) {
+			
+		}
+		if (wallpaper == null) {
+			wallpaper = images.get(3);
 		}
 	}
+	
 	
 	public void scrollApp(double x, double y, double origin) {
 		PVector temp = new PVector ((float)x, (float)y);
 		switch(appSelected) {
-		case 0:
-			break;
-		case 1:
-			break;
-		case 2:
-			//canv.scroll(temp);
-			break;
-		case 3:
-			//photos.scroll(temp);
-			break;
 		case 4:
 			settings.scroll(temp, origin);
 			break;
@@ -150,7 +161,16 @@ public class HomeScreen extends Application{
 	}
 	
 	public void updatePhoto(KeyEvent e) {
-		photos.update(e);
+		if (appSelected == 3 && (e.getKeyCode() == 39 || e.getKeyCode() == 37)) {
+			//If Photos selected and left or right arrow key selected
+			photos.update(e);
+		} else if (e.getKeyCode() == 27) {
+			//If ESC key pressed
+			if (appSelected == 0) {
+				System.exit(0);
+			}
+			appSelected = 0;
+		}
 	}
 	
 	@Override
@@ -159,13 +179,61 @@ public class HomeScreen extends Application{
 		int pos = 0;
 		for (int i = 0; i < icons.size(); i++) {
 			if (icons.get(i).clicked(e)) {
+				icons.get(i).setClicked();
+				t.restart();
 				temp = true;
 				pos = i+1;
-				System.out.println(pos);
 				break;
 			}
 		}
 		appToDisplay(pos);
 		return temp;
+	}
+	
+	public int getAppSelected() {
+		return appSelected;
+	}
+	
+	private class imageIterator implements Iterator<ImageHolder> {
+		private int index;
+		private String tlf;
+		
+		private imageIterator(String toLookFor) {
+			index = 0;
+			tlf = toLookFor;
+			advance();
+		}
+		
+		private void advance() {
+			while (index < images.size()) {
+				if (images.get(index).getFN() == tlf) {
+					return;
+				}
+				index++;
+			}
+		}
+		
+		@Override
+		public boolean hasNext() {
+			// TODO Auto-generated method stub
+			return index < images.size();
+		}
+
+		@Override
+		public ImageHolder next() {
+			// TODO Auto-generated method stub
+			ImageHolder t = images.get(index);
+			advance();
+			return t;
+		}
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		for (Icon i : icons) {
+			i.setUnClicked();
+		}
+		
 	}
 }

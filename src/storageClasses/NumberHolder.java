@@ -1,3 +1,10 @@
+/**
+ * @author Steven Kobza
+ * @version 1.0
+ * <h1> Storage Class for Numbers in Calc </h1>
+ * <p> This class stores the buttons / numbers from the calculator </p>
+ */
+
 package storageClasses;
 
 import java.awt.Shape;

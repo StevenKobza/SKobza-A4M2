@@ -1,3 +1,13 @@
+/**
+ * @author Steven Kobza
+ * @version 1.0
+ * <h1> Utility Class</h1>
+ * <p>This is where I hide all of my crappy code/code that only gets
+ * run once but I don't want to have it in my actual main code.
+ * So the setting menus are initialized here and there is a random
+ * function here too</p>
+ */
+
 package util;
 
 import storageClasses.*;
@@ -13,7 +23,8 @@ public class Util {
 	
 	public static void setUpMenus(ArrayList<SettingMenu> settings) {
 		
-		
+		//As you can see, not all Settings have a sub menu, this is
+		//mostly due to the fact that I can't showcase everything
 		SettingMenu airplaneMode = new SettingMenu("Airplane Mode",1);
 		
 		SettingMenu wifi = new SettingMenu("Wi-Fi",1);
@@ -158,10 +169,10 @@ public class Util {
 	}
 	
 	public static void setUpClasses(ArrayList<Classes> classes) {
-		Classes iat106 = new Classes("IAT 106 Line Drawing Simulator", "IAT 106", Color.blue, (500-100)/2, 100);
-		Classes iat201 = new Classes("IAT 201 Working with groups ain't great", "IAT 201", Color.red, (500-100)/2, 100);
-		Classes iat265 = new Classes("IAT 106 Line Drawing Simulator", "IAT 265", Color.blue, (500-100)/2, 100);
-		Classes iat340 = new Classes("IAT 201 Working with groups ain't great", "IAT 340", Color.red, (500-100)/2, 100);
+		Classes iat106 = new Classes("Line Drawing Simulator", "IAT 106", Color.blue, (500-100)/2, 100);
+		Classes iat201 = new Classes("Working with groups ain't great", "IAT 201", Color.red, (500-100)/2, 100);
+		Classes iat265 = new Classes("So much code", "IAT 265", Color.green, (500-100)/2, 100);
+		Classes iat340 = new Classes("What happen when sound exist", "IAT 340", Color.yellow, (500-100)/2, 100);
 		classes.add(iat106);
 		classes.add(iat201);
 		classes.add(iat265);

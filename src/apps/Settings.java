@@ -1,3 +1,12 @@
+/**
+ * @author Steven Kobza
+ * @version 1.0
+ * <h1> Settings App</h1>
+ * <p>This app is to draw the settings as well as the sub settings within
+ * those respective settings. So for example, when it goes into the Wi-Fi setting
+ * and the menu changes</p>
+ */
+
 package apps;
 
 import java.awt.Color;
@@ -5,6 +14,8 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
@@ -12,12 +23,14 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.swing.Timer;
+
 import processing.core.PVector;
 import storageClasses.*;
 import util.*;
 import abstractClasses.*;
 
-public class Settings extends Application{
+public class Settings extends Application implements ActionListener{
 	private ArrayList<SettingMenu> overallSettings, settingsToPaint;
 	private ArrayList<ArrayList<SettingMenu>> settingLevels;
 	private double x = 0, y = 0;
@@ -25,6 +38,8 @@ public class Settings extends Application{
 	private double settingBoxHeight = 40;
 	private Path2D.Double back;
 	private int wallpaperChosen;
+	private Timer onClick;
+	private SettingMenu lastSettingClicked;
 	
 	public Settings() {
 		overallSettings = new ArrayList<SettingMenu>();
@@ -33,15 +48,16 @@ public class Settings extends Application{
 		setUpSettings();
 		
 		loc = new PVector(0, (float)settingBoxHeight/2 + 80);
-		for (int i = 0; i < overallSettings.size(); i++) {
-			//System.out.println(overallSettings.get(i).getName());
-		}
 		x = 0;
 		y = 0;
 		back = new Path2D.Double();
 		setUpBackButton();
+		onClick = new Timer(50, this);
 	}
 	
+	/**
+	 * Setting up the back button for going back out of a sub menu
+	 */
 	private void setUpBackButton() {
 		back.moveTo(30, 10);
 		back.lineTo(30, 20);
@@ -63,18 +79,27 @@ public class Settings extends Application{
 	public void draw(Graphics2D g2) {
 		AffineTransform tx = g2.getTransform();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setColor(Color.black);
 		g2.fillRect(0, 0, frameDim.width, frameDim.height);
 		g2.translate(loc.x, loc.y);
+		
 		double tempY = loc.y;
 		Font temp = g2.getFont().deriveFont(15f);
 		g2.setFont(temp);
-		settingsToPaint = settingLevels.get(settingLevels.size()-1);
+		
+		settingsToPaint = settingLevels.get(settingLevels.size()-1); //Getting the setting menu that should be printed
+		//from an arraylist of setting menu. The last one to be specific
+		
 		for (int i = 0; i < settingsToPaint.size(); i++) {
 			settingsToPaint.get(i).draw(g2);
 			g2.setColor(new Color(50, 50, 50));
 			settingsToPaint.get(i).setXY(0, tempY);
 			try {
+				if (settingsToPaint.get(i) != lastSettingClicked) {
+					settingsToPaint.get(i).setUnClicked();
+				}
 				if (settingsToPaint.get(i).getGroup() == settingsToPaint.get(i+1).getGroup()) {
+					//The different groups are to make sure that the settings are spaced properly
 					g2.drawLine(40, (int)settingBoxHeight/2, frameDim.width, (int)settingBoxHeight/2);
 					g2.translate(0, settingBoxHeight);
 					tempY += settingBoxHeight;
@@ -97,7 +122,8 @@ public class Settings extends Application{
 		g2.setFont(temp);
 		g2.setColor(Color.white);
 		g2.drawString("Settings", frameDim.width/2-frameDim.width/10, 40);
-		g2.fill(back);
+		if (settingLevels.size() > 1)
+			g2.fill(back);
 		g2.setTransform(tx);
 	}
 	
@@ -121,6 +147,9 @@ public class Settings extends Application{
 		for (int i = 0; i < settingsToPaint.size(); i++) {
 			if (settingsToPaint.get(i).clicked(e)) {
 				location = i;
+				lastSettingClicked = settingsToPaint.get(i);
+				settingsToPaint.get(i).setClicked();
+				onClick.restart();
 				break;
 			}
 		}
@@ -128,27 +157,29 @@ public class Settings extends Application{
 			AffineTransform af = new AffineTransform();
 			Shape s = af.createTransformedShape(back);
 			if (s.contains(e.getX(), e.getY())) {
+				if (settingLevels.size() > 1) {
 				settingsToPaint.clear();
 				try {
-					settingLevels.remove(settingLevels.get(settingLevels.size()-1));
+						settingLevels.remove(settingLevels.get(settingLevels.size()-1));
 				} catch (IndexOutOfBoundsException ioobe) {
 
+				}
 				}
 			}
 		}
 		try {
 			switch (settingsToPaint.get(location).getName()) {
 			case "Photo 1":
-				wallpaperChosen = 1;
+				wallpaperName = "PhotoOne";
 				break;
 			case "Photo 2":
-				wallpaperChosen = 2;
+				wallpaperName = "PhotoTwo";
 				break;
 			case "Photo 3":
-				wallpaperChosen = 3;
+				wallpaperName = "PhotoThree";
 				break;
 			case "Keep Current":
-				wallpaperChosen = 4;
+				wallpaperName = "wallpaper";
 				break;
 			}
 		} catch (IndexOutOfBoundsException ioobe) {
@@ -206,5 +237,12 @@ public class Settings extends Application{
 	
 	public int hasWPChanged() {
 		return wallpaperChosen;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		lastSettingClicked.setUnClicked();
+		
 	}
 }

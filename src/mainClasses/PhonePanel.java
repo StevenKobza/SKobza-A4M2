@@ -1,3 +1,11 @@
+/**
+ * @author Steven Kobza
+ * @version 1.0
+ * <h1> Phone Panel </h1>
+ * <p>This is my main panel class. It holds the home screen instance as well as the
+ * clicking, keyboard interaction.</p>
+ */
+
 package mainClasses;
 
 import java.awt.Color;
@@ -20,8 +28,8 @@ import apps.*;
 
 @SuppressWarnings("serial")
 public class PhonePanel extends JPanel implements ActionListener{
-	private static final int PHONE_W = 500;
-	private static final int PHONE_H = 1000;
+	public static final int PHONE_W = 500;
+	public static final int PHONE_H = 1000;
 	private double lastIntYPos;
 	private Timer t;
 	private int appSelected = 0; //0 = Home Screen, 1 = Calc, 2 = Canv, 3 = Photos, 4 = Settings
@@ -69,7 +77,7 @@ public class PhonePanel extends JPanel implements ActionListener{
 		this.addMouseMotionListener(new MouseMotionAdapter() {
 			double scrollAmount;
 			public void mouseDragged(MouseEvent e) {
-				//scrollAmount = e.getY() - lastIntYPos;
+				//if the dragging is at the bottom of the screen and the user hasn't been scrolling down, set to 0
 				if (e.getY() > PHONE_H-100 && lastIntYPos > e.getY() && scrolling == false) {
 					homeScreen.appToDisplay(0);
 				} else {
@@ -92,8 +100,11 @@ public class PhonePanel extends JPanel implements ActionListener{
 		g2.fillRect(0, 0, PHONE_W, PHONE_H);
 		g2.setColor(Color.black);
 		g2.drawString("Hello there, and welcome to my phone app", PHONE_W/4, PHONE_H/2);
-		g2.drawString("In this process, you will be using a stripped down iPhone", PHONE_W/5, PHONE_H/2 + 20);
-		g2.drawString("Please click to continue", PHONE_W/3, PHONE_H/2 + 40);
+		g2.drawString("In this process, you will be using a stripped down iPhone", PHONE_W/5, PHONE_H/2 + 80);
+		g2.drawString("Please click to continue", PHONE_W/3, PHONE_H/2 + 100);
+		g2.drawString("When you go into an App, drag from bottom to go back", 100, PHONE_H/2 + 20);
+		g2.drawString("For the photos app, use the right and left arrow keys to navigate", 80, PHONE_H/2 + 40);
+		g2.drawString("Press esc to exit an app as well and esc from the home screen to exit", 70, PHONE_H/2 + 60);
 		}
 		g2.setTransform(tX);
 		if (introScreen == false) {
@@ -103,7 +114,7 @@ public class PhonePanel extends JPanel implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
+		repaint();
 		
 	}
 }
